@@ -1,0 +1,131 @@
+*, *::before, *::after { box-sizing: border-box; }
+
+/* `[hidden]` из UA-стилей часто перекрывается классами с display: flex/grid.
+   Возвращаем приоритет атрибуту, чтобы `el.hidden = true` действительно прятал элемент. */
+[hidden] { display: none !important; }
+
+/* Global smoothness — applies to any element that doesn't define its own transition */
+*, *::before, *::after {
+  transition-property: background-color, color, border-color, box-shadow, fill, stroke, opacity, transform;
+  transition-duration: 0.6s;
+  transition-timing-function: ease;
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: 0s !important; }
+}
+html, body { height: 100%; }
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--text);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+h1, h2, h3, h4, p { margin: 0; }
+a { color: var(--mint-600); text-decoration: none; }
+a:hover { color: var(--mint-700); }
+button { font: inherit; cursor: pointer; }
+img, svg { display: block; max-width: 100%; }
+input, textarea, select, button { font-family: inherit; }
+:focus-visible { outline: none; box-shadow: var(--ring); border-radius: var(--r-sm); }
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 44px;
+  padding: 0 18px;
+  border-radius: var(--r-md);
+  border: 1px solid transparent;
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.01em;
+  transition: background 0.6s ease, color 0.6s ease, border-color 0.6s ease, transform 0.6s ease;
+  user-select: none;
+}
+.btn:active { transform: translateY(1px); }
+/* Без этого hidden-атрибут не работает — .btn ставит display: inline-flex */
+.btn[hidden] { display: none; }
+.btn:disabled,
+.btn[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+  filter: grayscale(0.4);
+}
+.btn--primary {
+  background: var(--mint-500);
+  color: #fff;
+  border-color: var(--mint-500);
+}
+.btn--primary:hover {
+  background: transparent;
+  color: var(--orange-600);
+  border-color: var(--orange-500);
+  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.35);
+}
+.btn--ghost {
+  background: transparent;
+  color: var(--text);
+  border-color: var(--border-strong);
+}
+.btn--ghost:hover { background: var(--mint-50); border-color: var(--mint-300); color: var(--mint-700); }
+.btn--danger {
+  background: transparent;
+  color: #b91c1c;
+  border-color: #fecaca;
+}
+.btn--danger:hover {
+  background: #fef2f2;
+  border-color: #f87171;
+  color: #991b1b;
+}
+.btn--block { width: 100%; }
+
+/* Form */
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field__label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-soft);
+}
+.field__input {
+  height: 46px;
+  padding: 0 14px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  border-radius: var(--r-md);
+  font-size: 15px;
+  color: var(--text);
+  transition: border-color 0.6s ease, box-shadow 0.6s ease;
+}
+.field__input::placeholder { color: var(--text-mute); }
+.field__input:hover { border-color: var(--border-strong); }
+.field__input:focus { border-color: var(--mint-400); box-shadow: var(--ring); outline: none; }
+.field__input[aria-invalid="true"] { border-color: var(--danger); box-shadow: 0 0 0 4px rgba(229,72,77,0.12); }
+.field__hint { font-size: 12px; color: var(--text-mute); }
+.field__error { font-size: 12px; color: var(--danger); min-height: 14px; }
+
+.checkbox {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--text-soft);
+  cursor: pointer;
+}
+.checkbox input { accent-color: var(--mint-500); width: 16px; height: 16px; margin-top: 2px; }
+
+/* Divider */
+.divider {
+  display: flex; align-items: center; gap: 12px;
+  color: var(--text-mute); font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em;
+}
+.divider::before, .divider::after {
+  content: ""; flex: 1; height: 1px; background: var(--border);
+}

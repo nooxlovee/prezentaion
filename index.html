@@ -1,0 +1,1275 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Эвикс — презентация платформы</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/css/tokens.css" />
+  <link rel="stylesheet" href="assets/css/base.css" />
+  <style>
+    /* ===== Каркас ===== */
+    html, body { height: 100%; overflow: hidden; }
+    body.prez-body {
+      margin: 0;
+      background:
+        radial-gradient(1200px 600px at 80% -10%, rgba(43,191,139,0.10), transparent 60%),
+        radial-gradient(1000px 500px at -10% 110%, rgba(249,115,22,0.08), transparent 60%),
+        var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans);
+    }
+    .prez-shell { position: relative; height: 100vh; display: flex; flex-direction: column; }
+
+    .prez-top {
+      position: relative; z-index: 10;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 28px;
+      backdrop-filter: saturate(140%) blur(6px);
+      background: rgba(255,255,255,0.55);
+      border-bottom: 1px solid var(--border);
+    }
+    .prez-brand { display: flex; align-items: center; gap: 10px; font-weight: 800; }
+    .prez-brand__dot {
+      width: 22px; height: 22px; border-radius: 6px;
+      background: linear-gradient(135deg, var(--mint-400), var(--mint-600));
+      box-shadow: 0 6px 14px rgba(43,191,139,.35);
+    }
+    .prez-brand__name { font-size: 18px; }
+    .prez-brand__sub { color: var(--text-soft); font-weight: 500; font-size: 13px; margin-left: 6px; }
+    .prez-counter { font-variant-numeric: tabular-nums; font-weight: 600; color: var(--text-soft); font-size: 13px; letter-spacing: 0.04em; }
+    .prez-counter b { color: var(--text); font-weight: 700; }
+
+    .prez-stage { flex: 1; overflow: hidden; position: relative; }
+    .prez-track {
+      display: flex; height: 100%;
+      transition: transform 0.55s cubic-bezier(.5,.05,.2,1);
+      will-change: transform;
+    }
+    .prez-slide {
+      flex: 0 0 100%;
+      height: 100%;
+      padding: 22px 48px 18px;
+      display: flex; flex-direction: column;
+      overflow: hidden;
+      min-height: 0;
+    }
+
+    .slide-eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 12px; font-weight: 700; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--mint-700);
+      padding: 6px 10px; border-radius: 999px;
+      background: var(--mint-50); border: 1px solid var(--mint-200);
+      width: max-content;
+    }
+    .slide-title {
+      font-size: clamp(24px, 2.6vw, 36px);
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      margin: 10px 0 6px;
+      font-weight: 800;
+    }
+    .slide-title .accent { color: var(--mint-600); }
+    .slide-title .hot { color: var(--orange-600); }
+    .slide-sub {
+      color: var(--text-soft);
+      font-size: clamp(13px, 1vw, 15px);
+      max-width: 880px;
+      line-height: 1.55;
+    }
+
+    .slide-body {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 26px;
+      margin-top: 20px;
+      align-items: stretch;
+      min-height: 0;
+    }
+    .slide-body--single { grid-template-columns: 1fr; }
+    .slide-body--wide-right { grid-template-columns: 0.8fr 1.4fr; }
+    .slide-left, .slide-right { display: flex; flex-direction: column; gap: 12px; min-width: 0; min-height: 0; overflow: hidden; }
+
+    .bullets { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
+    .bullets li {
+      display: grid; grid-template-columns: 22px 1fr; gap: 12px;
+      font-size: 14px; line-height: 1.5; color: var(--text);
+    }
+    .bullets li::before {
+      content: ""; width: 14px; height: 14px; border-radius: 5px;
+      background: linear-gradient(135deg, var(--mint-300), var(--mint-600));
+      box-shadow: 0 4px 10px rgba(43,191,139,.25);
+      margin-top: 5px;
+    }
+    .bullets--ord { counter-reset: b; }
+    .bullets--ord li { grid-template-columns: 28px 1fr; }
+    .bullets--ord li::before {
+      counter-increment: b; content: counter(b);
+      background: #fff; border: 1px solid var(--mint-300); color: var(--mint-700);
+      font-weight: 800; font-size: 12px; display: grid; place-items: center;
+      width: 24px; height: 24px; border-radius: 8px; box-shadow: var(--shadow-sm);
+      margin-top: 0;
+    }
+    .bullets__title { font-weight: 700; color: var(--text); }
+    .bullets__title + small { display: block; color: var(--text-soft); margin-top: 2px; font-weight: 500; }
+
+    .surface {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-xl);
+      box-shadow: var(--shadow-md);
+      padding: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+    .surface--tinted { background: linear-gradient(180deg, #ffffff, #f5fbf8 100%); }
+
+    /* Скриншот-фрейм */
+    .screen {
+      background: linear-gradient(180deg, #ffffff, #fbfdfd 100%);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+      display: flex; flex-direction: column;
+      min-height: 0;
+      flex: 1;
+    }
+    .screen__bar {
+      display: flex; align-items: center; gap: 8px;
+      padding: 9px 14px;
+      border-bottom: 1px solid var(--border);
+      background: #f6faf8;
+      flex-shrink: 0;
+    }
+    .screen__dot { width: 10px; height: 10px; border-radius: 50%; }
+    .screen__dot:nth-child(1) { background: #ff7d6f; }
+    .screen__dot:nth-child(2) { background: #ffd166; }
+    .screen__dot:nth-child(3) { background: #69d8a2; }
+    .screen__url {
+      margin-left: 10px; font-size: 12px; color: var(--text-mute);
+      background: #fff; border: 1px solid var(--border);
+      padding: 4px 10px; border-radius: 999px;
+      font-variant-numeric: tabular-nums;
+    }
+    .screen__img {
+      display: block;
+      width: 100%;
+      flex: 1;
+      min-height: 0;
+      object-fit: cover;
+      object-position: top center;
+      background: #f6faf8;
+    }
+    .screen--tall .screen__img { object-fit: cover; object-position: top center; }
+
+    .pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 12px; font-weight: 700; padding: 4px 10px;
+      border-radius: 999px; border: 1px solid;
+    }
+    .pill--mint  { background: var(--mint-50);  color: var(--mint-700);   border-color: var(--mint-200); }
+    .pill--orange{ background: var(--orange-50);color: var(--orange-700); border-color: var(--orange-200); }
+    .pill--gray  { background: #f1f4f3;         color: var(--text-soft);  border-color: var(--border); }
+    .pill--done  { background: #eafaf2;         color: #178a5d;           border-color: #cfeedd; }
+    .pill--review{ background: #fff4ec;         color: var(--orange-700); border-color: var(--orange-200); }
+    .pill--draft { background: #f1f4f3;         color: var(--text-soft);  border-color: var(--border); }
+    .pill--pro   { background: #fef3c7;         color: #92400e;           border-color: #fcd34d; }
+
+    /* Навигация */
+    .prez-bottom {
+      position: relative; z-index: 10;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 28px;
+      border-top: 1px solid var(--border);
+      background: rgba(255,255,255,0.7);
+      backdrop-filter: blur(6px);
+    }
+    .prez-dots { display: flex; gap: 6px; flex-wrap: wrap; max-width: 70%; }
+    .prez-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--border-strong);
+      border: none; padding: 0; cursor: pointer;
+      transition: transform .25s ease, background .25s ease, width .25s ease;
+    }
+    .prez-dot[aria-current="true"] { background: var(--mint-500); width: 22px; border-radius: 6px; }
+    .prez-dot:hover { background: var(--mint-400); }
+    .prez-nav { display: flex; gap: 10px; }
+    .prez-btn {
+      width: 40px; height: 40px; border-radius: 12px;
+      background: #fff; border: 1px solid var(--border-strong);
+      display: grid; place-items: center; cursor: pointer;
+      color: var(--text); font-size: 18px;
+      box-shadow: var(--shadow-sm);
+    }
+    .prez-btn:hover { color: var(--mint-700); border-color: var(--mint-300); background: var(--mint-50); }
+    .prez-btn[disabled] { opacity: .4; pointer-events: none; }
+
+    /* === Hero (слайд 1) === */
+    .hero {
+      display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 40px; height: 100%;
+      align-items: center;
+    }
+    .hero h1 {
+      font-size: clamp(32px, 4.2vw, 60px);
+      line-height: 1; letter-spacing: -0.03em;
+      font-weight: 900;
+    }
+    .hero h1 em {
+      font-style: normal;
+      background: linear-gradient(120deg, var(--mint-500) 0%, var(--orange-500) 100%);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+    .hero p { color: var(--text-soft); font-size: 17px; line-height: 1.55; margin-top: 18px; max-width: 540px; }
+    .hero__who {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 26px; max-width: 560px;
+    }
+    .hero__who-card {
+      background: #fff; border: 1px solid var(--border); border-radius: 14px;
+      padding: 14px; box-shadow: var(--shadow-sm);
+    }
+    .hero__who-card b { display: block; font-size: 14px; font-weight: 800; margin-top: 6px; }
+    .hero__who-card small { display: block; color: var(--text-soft); font-size: 12px; margin-top: 4px; line-height: 1.4; }
+    .hero__who-ic { width: 32px; height: 32px; border-radius: 10px; background: var(--mint-50); color: var(--mint-700); display: grid; place-items: center; }
+    .hero__who-card:nth-child(2) .hero__who-ic { background: #fff4ec; color: var(--orange-700); }
+    .hero__who-card:nth-child(3) .hero__who-ic { background: #ede9fe; color: #5b21b6; }
+
+    .hero-visual {
+      position: relative;
+      width: 100%;
+      max-height: 70vh;
+      aspect-ratio: 520 / 460;
+      border-radius: 28px;
+      background: linear-gradient(135deg, var(--mint-50), #fff 60%);
+      border: 1px solid var(--mint-200);
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+    }
+
+    .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+    /* === 4 типа сценария === */
+    .stype-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .stype {
+      background: #fff; border: 1px solid var(--border); border-radius: 16px;
+      padding: 14px; box-shadow: var(--shadow-sm);
+      position: relative;
+    }
+    .stype__ic {
+      width: 40px; height: 40px; border-radius: 12px;
+      background: linear-gradient(135deg, var(--mint-100), var(--mint-300));
+      display: grid; place-items: center; color: var(--mint-800);
+      margin-bottom: 10px;
+    }
+    .stype:nth-child(2) .stype__ic { background: linear-gradient(135deg, #ffe4d0, var(--orange-300)); color: var(--orange-700); }
+    .stype:nth-child(3) .stype__ic { background: linear-gradient(135deg, #ede9fe, #c4b5fd); color: #5b21b6; }
+    .stype:nth-child(4) .stype__ic { background: linear-gradient(135deg, #fef3c7, #fcd34d); color: #92400e; }
+    .stype__title { font-weight: 800; font-size: 15px; }
+    .stype__desc { color: var(--text-soft); font-size: 12px; margin-top: 4px; line-height: 1.45; }
+
+    /* Wizard steps row */
+    .wizrow { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-bottom: 12px; }
+    .wizrow__step {
+      background: #fff; border: 1px solid var(--border); border-radius: 12px;
+      padding: 10px 12px; position: relative;
+    }
+    .wizrow__step--on {
+      background: var(--mint-500); border-color: var(--mint-500); color: #fff;
+    }
+    .wizrow__step--done {
+      background: var(--mint-50); border-color: var(--mint-300);
+    }
+    .wizrow__num {
+      width: 22px; height: 22px; border-radius: 50%;
+      background: var(--mint-500); color: #fff; font-weight: 800;
+      font-size: 12px; display: grid; place-items: center; margin-bottom: 6px;
+    }
+    .wizrow__step--on .wizrow__num { background: rgba(255,255,255,.25); color: #fff; }
+    .wizrow__step--done .wizrow__num { background: var(--mint-300); color: #fff; }
+    .wizrow__title { font-weight: 800; font-size: 12px; }
+    .wizrow__sub { font-size: 11px; margin-top: 2px; line-height: 1.3; opacity: .75; }
+    .wizrow__step--on .wizrow__sub { opacity: .9; }
+    .wizrow__step::after {
+      content: ""; position: absolute; right: -10px; top: 50%;
+      width: 14px; height: 2px; background: var(--mint-300);
+    }
+    .wizrow__step:last-child::after { display: none; }
+
+    /* App mockup (для мокапов этапов wizard'а) */
+    .app-mock {
+      display: grid; grid-template-columns: 150px 1fr;
+      background: #fff;
+      min-height: 0;
+      height: 100%;
+      overflow: hidden;
+    }
+    .app-mock__side {
+      background: linear-gradient(180deg, #1a8261 0%, #156e51 100%);
+      color: #fff; padding: 14px 12px;
+      display: flex; flex-direction: column; gap: 10px;
+      overflow: hidden;
+    }
+    .app-mock__brand { font-weight: 900; letter-spacing: -0.01em; }
+    .app-mock__nav { display: flex; flex-direction: column; gap: 4px; font-size: 12px; font-weight: 600; flex: 1; }
+    .app-mock__nav-section { font-size: 10px; letter-spacing: 0.14em; opacity: .55; margin-top: 6px; margin-bottom: 4px; }
+    .app-mock__nav-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 6px 8px; border-radius: 6px; opacity: .75;
+    }
+    .app-mock__nav-item--on { background: rgba(255,255,255,.15); opacity: 1; }
+    .app-mock__nav-item b { background: rgba(255,255,255,.2); padding: 1px 6px; border-radius: 999px; font-size: 10px; font-weight: 700; }
+    .app-mock__main { padding: 14px 18px; min-width: 0; min-height: 0; display: flex; flex-direction: column; gap: 10px; overflow: hidden; }
+    .app-mock__title { font-weight: 800; font-size: 18px; }
+    .app-mock__lead { font-size: 12px; color: var(--text-soft); }
+
+    /* Текст сценария — превью */
+    .scen-text {
+      background: #f6faf8; border: 1px solid var(--border);
+      border-radius: 14px; padding: 12px 14px;
+      font-size: 12px; line-height: 1.5;
+      flex: 1; min-height: 0; overflow: hidden;
+      position: relative;
+    }
+    .scen-text::after {
+      content: ""; position: absolute; left: 0; right: 0; bottom: 0;
+      height: 60px;
+      background: linear-gradient(180deg, transparent, #f6faf8);
+    }
+    .scen-text b { color: var(--mint-700); }
+
+    /* Чипы и поля для мокапов */
+    .mock-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+    .mock-chip {
+      padding: 6px 10px; border-radius: 999px;
+      border: 1px solid var(--border); background: #fff;
+      font-size: 12px; font-weight: 600; color: var(--text-soft);
+    }
+    .mock-chip--on { background: var(--mint-500); color: #fff; border-color: var(--mint-500); }
+
+    .mock-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+    .mock-btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      height: 36px; padding: 0 14px; border-radius: 10px;
+      font-size: 12px; font-weight: 700;
+    }
+    .mock-btn--primary { background: var(--mint-500); color: #fff; }
+    .mock-btn--ghost { background: #fff; color: var(--text); border: 1px solid var(--border-strong); }
+
+    /* Аватар-плитки */
+    .mock-avatars { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+    .mock-avatar {
+      background: #0f1916; border-radius: 10px;
+      aspect-ratio: 3/4; position: relative;
+      display: flex; align-items: flex-end; padding: 8px;
+      color: #fff; font-size: 11px; font-weight: 700;
+      overflow: hidden;
+    }
+    .mock-avatar--on { outline: 2px solid var(--mint-500); }
+    .mock-avatar__gender {
+      position: absolute; top: 6px; left: 6px;
+      font-size: 9px; font-weight: 800;
+      padding: 2px 6px; border-radius: 999px;
+      background: rgba(255,255,255,.15);
+    }
+    .mock-avatar--f .mock-avatar__gender { background: #ec4899; }
+    .mock-avatar--m .mock-avatar__gender { background: #3b82f6; }
+
+    /* Видео-плеер мокап */
+    .video-mock {
+      background: #0f1916; color: #fff;
+      border-radius: 14px;
+      aspect-ratio: 9/16;
+      max-width: 240px; margin: 0 auto;
+      position: relative; overflow: hidden;
+      box-shadow: 0 18px 40px rgba(15,25,22,.35);
+    }
+    .video-mock::before {
+      content: ""; position: absolute; inset: 0;
+      background: linear-gradient(180deg, transparent 30%, rgba(0,0,0,.55) 100%),
+                  radial-gradient(70% 50% at 50% 30%, rgba(43,191,139,.35), transparent 60%),
+                  radial-gradient(60% 60% at 50% 80%, rgba(249,115,22,.25), transparent 70%);
+    }
+    .video-mock__play {
+      position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%);
+      width: 56px; height: 56px; border-radius: 50%;
+      background: rgba(255,255,255,.95); color: var(--mint-700);
+      display: grid; place-items: center; font-size: 22px;
+    }
+    .video-mock__caption {
+      position: absolute; left: 12px; right: 12px; bottom: 14px;
+      font-weight: 800; font-size: 14px; line-height: 1.15;
+      text-shadow: 0 2px 6px rgba(0,0,0,.4);
+    }
+
+    /* Два режима монтажа */
+    .modes { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .mode {
+      background: #fff; border: 1px solid var(--border); border-radius: 14px;
+      padding: 14px; box-shadow: var(--shadow-sm);
+    }
+    .mode--pro { background: linear-gradient(160deg, #0f1916, #1a3329); color: #fff; border: none; }
+    .mode__title { font-weight: 800; font-size: 14px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+    .mode__title small { font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 999px; background: var(--mint-50); color: var(--mint-700); }
+    .mode--pro .mode__title small { background: var(--mint-500); color: #fff; }
+    .mode ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 6px; font-size: 12px; line-height: 1.4; }
+    .mode ul li::before { content: "→ "; color: var(--mint-500); font-weight: 800; }
+    .mode--pro ul li::before { color: var(--mint-300); }
+
+    /* Тарифы */
+    .plans { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .plan {
+      background: #fff; border: 1px solid var(--border); border-radius: 18px;
+      padding: 18px; box-shadow: var(--shadow-sm);
+    }
+    .plan--pro { background: linear-gradient(160deg, #0f1916, #1a3329); color: #fff; border-color: transparent; }
+    .plan__name { font-size: 11px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: var(--mint-600); }
+    .plan--pro .plan__name { color: var(--mint-300); }
+    .plan__price { font-size: 32px; font-weight: 900; margin: 8px 0; letter-spacing: -0.02em; }
+    .plan__price small { font-size: 13px; color: var(--text-soft); font-weight: 600; }
+    .plan--pro .plan__price small { color: rgba(255,255,255,.6); }
+    .plan ul { list-style: none; padding: 0; margin: 12px 0 0; display: flex; flex-direction: column; gap: 6px; font-size: 12px; }
+    .plan ul li::before { content: "✓ "; color: var(--mint-500); font-weight: 800; }
+    .plan--pro ul li::before { color: var(--mint-300); }
+
+    .platforms { display: flex; flex-wrap: wrap; gap: 6px; }
+    .platform-chip {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 10px; background: #fff; border: 1px solid var(--border);
+      border-radius: 999px; font-size: 12px; font-weight: 600; color: var(--text);
+    }
+    .platform-chip__dot { width: 8px; height: 8px; border-radius: 50%; }
+
+    /* Преимущества */
+    .benefits { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+    .benefit {
+      background: #fff; border: 1px solid var(--border); border-radius: 18px;
+      padding: 22px; box-shadow: var(--shadow-sm);
+    }
+    .benefit__ic {
+      width: 44px; height: 44px; border-radius: 12px;
+      background: var(--mint-50); color: var(--mint-700);
+      display: grid; place-items: center;
+    }
+    .benefit h3 { font-size: 16px; font-weight: 800; margin: 12px 0 6px; }
+    .benefit p { color: var(--text-soft); font-size: 13px; line-height: 1.55; }
+
+    .tbl-h { font-size: 11px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-mute); margin-bottom: 6px; }
+
+    @media (max-width: 1100px) {
+      .slide-body { grid-template-columns: 1fr !important; }
+      .stype-grid, .plans, .benefits, .modes { grid-template-columns: 1fr; }
+      .wizrow { grid-template-columns: repeat(2, 1fr); }
+      .wizrow__step::after { display: none; }
+    }
+  </style>
+</head>
+<body class="prez-body">
+  <div class="prez-shell">
+
+    <header class="prez-top">
+      <div class="prez-brand">
+        <span class="prez-brand__dot"></span>
+        <span class="prez-brand__name">Эвикс</span>
+        <span class="prez-brand__sub">AI-студия видеоконтента</span>
+      </div>
+      <div class="prez-counter"><b id="prez-cur">01</b> / <span id="prez-total">14</span></div>
+    </header>
+
+    <main class="prez-stage">
+      <div class="prez-track" id="prez-track">
+
+        <!-- ============== СЛАЙД 1: ЧТО ТАКОЕ ЭВИКС ============== -->
+        <section class="prez-slide">
+          <div class="hero">
+            <div>
+              <span class="slide-eyebrow">Презентация платформы</span>
+              <h1>Эвикс — <em>AI-студия</em> для тех, кто хочет видеоконтент без съёмки</h1>
+              <p>Платформа закрывает весь цикл: вы рассказываете, кто вы и для кого работаете — Эвикс делает сценарии, озвучивает их синтетическим ведущим, монтирует видео, рисует обложки и помогает публиковать в соцсети.</p>
+
+              <div class="hero__who">
+                <div class="hero__who-card">
+                  <div class="hero__who-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21v-2a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v2"/></svg></div>
+                  <b>Эксперты</b>
+                  <small>врачи, психологи, юристы — кто не хочет быть в кадре</small>
+                </div>
+                <div class="hero__who-card">
+                  <div class="hero__who-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3h18v18H3z"/><path d="M9 9h6v6H9z"/></svg></div>
+                  <b>Бренды</b>
+                  <small>клиники, школы, агентства — без отдела видеопродакшна</small>
+                </div>
+                <div class="hero__who-card">
+                  <div class="hero__who-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 3v18l7-5 7 5V3z"/></svg></div>
+                  <b>Блогеры</b>
+                  <small>кто хочет масштабироваться на 19 платформ одновременно</small>
+                </div>
+              </div>
+            </div>
+
+            <div class="hero-visual">
+              <svg viewBox="0 0 520 460" style="position:absolute; inset:0; width:100%; height:100%;">
+                <defs>
+                  <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#2bbf8b"/><stop offset="100%" stop-color="#1a8261"/></linearGradient>
+                  <linearGradient id="g2" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#ff8a33"/><stop offset="100%" stop-color="#e05a00"/></linearGradient>
+                  <filter id="sh"><feDropShadow dx="0" dy="10" stdDeviation="14" flood-opacity=".2"/></filter>
+                </defs>
+                <circle cx="180" cy="200" r="120" fill="url(#g1)" filter="url(#sh)"/>
+                <circle cx="180" cy="170" r="42" fill="#fff" opacity=".9"/>
+                <rect x="120" y="220" width="120" height="60" rx="30" fill="#fff" opacity=".9"/>
+                <g filter="url(#sh)">
+                  <rect x="290" y="80" width="200" height="120" rx="18" fill="#fff"/>
+                  <rect x="306" y="100" width="60" height="10" rx="5" fill="#2bbf8b"/>
+                  <rect x="306" y="120" width="160" height="6" rx="3" fill="#e6e9e8"/>
+                  <rect x="306" y="134" width="140" height="6" rx="3" fill="#e6e9e8"/>
+                  <rect x="306" y="148" width="120" height="6" rx="3" fill="#e6e9e8"/>
+                  <rect x="306" y="170" width="80" height="20" rx="10" fill="#fff4ec" stroke="#ffc89c"/>
+                </g>
+                <g filter="url(#sh)">
+                  <rect x="310" y="240" width="170" height="170" rx="18" fill="url(#g2)"/>
+                  <rect x="330" y="370" width="130" height="10" rx="5" fill="#fff" opacity=".9"/>
+                  <rect x="330" y="385" width="90" height="6" rx="3" fill="#fff" opacity=".6"/>
+                </g>
+                <path d="M250 200 Q280 200 295 150" stroke="#2bbf8b" stroke-width="2" fill="none" stroke-dasharray="4 4"/>
+                <path d="M250 230 Q280 280 305 320" stroke="#f97316" stroke-width="2" fill="none" stroke-dasharray="4 4"/>
+              </svg>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============== СЛАЙД 2: РЕГИСТРАЦИЯ И ВХОД ============== -->
+        <section class="prez-slide">
+          <span class="slide-eyebrow">01 · Старт</span>
+          <h2 class="slide-title">Регистрация и вход — <span class="accent">за 30 секунд</span></h2>
+          <p class="slide-sub">Минимум полей на входе. Никаких API-ключей, никаких подключений на старте. Вы регистрируетесь, входите — и сразу попадаете на ключевой шаг: квиз о бренде.</p>
+
+          <div class="slide-body">
+            <div class="slide-left">
+              <ul class="bullets bullets--ord">
+                <li><div><span class="bullets__title">Регистрация</span><small>Имя, фамилия, email, пароль. Никакой верификации по SMS на этом этапе.</small></div></li>
+                <li><div><span class="bullets__title">Вход</span><small>Email + пароль, сессия сохраняется в браузере.</small></div></li>
+                <li><div><span class="bullets__title">Один аккаунт = один бренд</span><small>В аккаунте хранятся сценарии, аватары, монтажи, подключённые соцсети — это «рабочее пространство» вашего бренда.</small></div></li>
+                <li><div><span class="bullets__title">Сразу к делу</span><small>После входа без задержек ведём вас на квиз — там собирается весь контекст для AI.</small></div></li>
+              </ul>
+            </div>
+
+            <div class="slide-right">
+              <div class="pair">
+                <div class="screen">
+                  <div class="screen__bar">
+                    <span class="screen__dot"></span><span class="screen__dot"></span><span class="screen__dot"></span>
+                    <span class="screen__url">эвикс.рф / регистрация</span>
+                  </div>
+                  <img class="screen__img" src="assets/img/screens/index.png" alt="Регистрация Эвикс" />
+                </div>
+                <div class="screen">
+                  <div class="screen__bar">
+                    <span class="screen__dot"></span><span class="screen__dot"></span><span class="screen__dot"></span>
+                    <span class="screen__url">эвикс.рф / вход</span>
+                  </div>
+                  <img class="screen__img" src="assets/img/screens/login.png" alt="Вход в Эвикс" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============== СЛАЙД 3: КВИЗ ============== -->
+        <section class="prez-slide">
+          <span class="slide-eyebrow">02 · Профиль бренда</span>
+          <h2 class="slide-title">Квиз о бренде — <span class="accent">основа всех AI-модулей</span></h2>
+          <p class="slide-sub">12 вопросов о вашем бренде, аудитории и манере общения. Один раз — и дальше каждый AI-модуль (сценарии, голос, аватар, обложки) использует эти ответы как контекст. Без квиза — «общий» контент. С квизом — фирменный.</p>
+
+          <div class="slide-body">
+            <div class="slide-left">
+              <div class="tbl-h">Что собирает квиз</div>
+              <ol style="list-style:none; padding:0; margin:0; display:grid; grid-template-columns: 1fr 1fr; gap:6px 14px; font-size:13px; color:var(--text);">
+                <li>① Имя бренда</li>
+                <li>② Ниша</li>
+                <li>③ Портрет ЦА</li>
+                <li>④ Боли аудитории</li>
+                <li>⑤ Тон общения</li>
+                <li>⑥ Обращение «ты»/«вы»</li>
+                <li>⑦ Монетизация</li>
+                <li>⑧ Ключевые темы</li>
+                <li>⑨ Запреты в контенте</li>
+                <li>⑩ Экспертиза и регалии</li>
+                <li>⑪ Платформы публикации</li>
+                <li>⑫ Основной CTA</li>
+              </ol>
+
+              <div class="surface" style="margin-top: 8px;">
+                <div class="tbl-h">Зачем это нужно</div>
+                <p style="font-size:13px; color:var(--text-soft); line-height:1.55; margin:0;">Ответы становятся документом <b style="color:var(--text);">Tone of Voice</b>, который автоматически подмешивается в каждый промпт: голос аватара подбирается под ваш тон, сценарии — под боли вашей ЦА, обложки — под её эмоции.</p>
+              </div>
+            </div>
+
+            <div class="slide-right">
+              <div class="screen">
+                <div class="screen__bar">
+                  <span class="screen__dot"></span><span class="screen__dot"></span><span class="screen__dot"></span>
+                  <span class="screen__url">эвикс.рф / quiz.html</span>
+                </div>
+                <img class="screen__img" src="assets/img/screens/quiz.png" alt="Квиз о бренде — первый шаг" />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============== СЛАЙД 4: ОБЗОР 5 ЭТАПОВ WIZARD'А ============== -->
+        <section class="prez-slide">
+          <span class="slide-eyebrow">03 · Сценарии · Обзор</span>
+          <h2 class="slide-title">Создание сценария — <span class="accent">5 этапов wizard'а</span></h2>
+          <p class="slide-sub">Wizard ведёт по пяти этапам строго по порядку. На каждом шаге система предлагает только то, что соответствует вашему Tone of Voice. Дальше — детально о каждом этапе.</p>
+
+          <div class="slide-body slide-body--single">
+            <div class="wizrow">
+              <div class="wizrow__step">
+                <div class="wizrow__num">1</div>
+                <div class="wizrow__title">Тип сценария</div>
+                <div class="wizrow__sub" style="color:var(--text-soft);">логика генерации — откуда брать идею</div>
+              </div>
+              <div class="wizrow__step">
+                <div class="wizrow__num">2</div>
+                <div class="wizrow__title">Сценарий</div>
+                <div class="wizrow__sub" style="color:var(--text-soft);">текст монолога — просмотр и правки</div>
+              </div>
+              <div class="wizrow__step">
+                <div class="wizrow__num">3</div>
+                <div class="wizrow__title">Аватар и озвучка</div>
+                <div class="wizrow__sub" style="color:var(--text-soft);">кто читает, какой голос, эмоция, размер</div>
+              </div>
+              <div class="wizrow__step">
+                <div class="wizrow__num">4</div>
+                <div class="wizrow__title">Результат</div>
+                <div class="wizrow__sub" style="color:var(--text-soft);">аватар озвучивает — получается видео</div>
+              </div>
+              <div class="wizrow__step">
+                <div class="wizrow__num">5</div>
+                <div class="wizrow__title">Монтаж</div>
+                <div class="wizrow__sub" style="color:var(--text-soft);">автомат или живой монтажёр</div>
+              </div>
+            </div>
+
+            <div class="screen" style="flex: 1;">
+              <div class="screen__bar">
+                <span class="screen__dot"></span><span class="screen__dot"></span><span class="screen__dot"></span>
+                <span class="screen__url">эвикс.рф / scenario-new.html</span>
+              </div>
+              <img class="screen__img" src="assets/img/screens/scenario-new.png" alt="Wizard создания сценария" />
+            </div>
+          </div>
+        </section>
+
+        <!-- ============== СЛАЙД 5: ЭТАП 1 — ТИП СЦЕНАРИЯ ============== -->
+        <section class="prez-slide">
+          <span class="slide-eyebrow">03 · Сценарии · Этап 1</span>
+          <h2 class="slide-title">Этап 1: <span class="accent">тип сценария</span> — выбираете источник идеи</h2>
+          <p class="slide-sub">Первый шаг wizard'а решает, ОТКУДА система возьмёт мысль для ролика. От этого зависит и текст, и драматургия, и формат итогового видео.</p>
+
+          <div class="slide-body">
+            <div class="slide-left">
+              <div class="stype-grid">
+                <div class="stype">
+                  <div class="stype__ic">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21v-2a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v2"/></svg>
+                  </div>
+                  <div class="stype__title">Конкурент</div>
+                  <div class="stype__desc">На основе лучших роликов конкурентов. Система анализирует их хук-паттерны и строит сценарий по аналогичной механике — но с вашим ToV.</div>
+                </div>
+                <div class="stype">
+                  <div class="stype__ic">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9"/><polyline points="3 4 3 12 11 12"/></svg>
+                  </div>
+                  <div class="stype__title">Перераспаковка</div>
+                  <div class="stype__desc">Переписать собственный ролик — взять старый сценарий и перепаковать в новый угол или формат. Идеально для редизайна архива.</div>
+                </div>
+                <div class="stype">
+                  <div class="stype__ic">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c1 .8 1.5 1.5 1.5 2.3v1h5v-1c0-.8.5-1.5 1.5-2.3A7 7 0 0 0 12 2z"/></svg>
+                  </div>
+                  <div class="stype__title">Своя тема</div>
+                  <div class="stype__desc">Просто пишете тему — Эвикс собирает сценарий с учётом ToV и продуктового анализа из библиотеки.</div>
+                </div>
+                <div class="stype">
+                  <div class="stype__ic">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M3 9h18"/></svg>
+                  </div>
+                  <div class="stype__title">Визуальные форматы <span class="pill pill--pro" style="font-size:9px; padding:2px 6px;">PRO</span></div>
+                  <div class="stype__desc">Авто-сборка из библиотеки виральных форматов. Берёт проверенный шаблон ниши и адаптирует под вашу тему.</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="slide-right">
+              <div class="screen">
+                <div class="screen__bar">
+                  <span class="screen__dot"></span><span class="screen__dot"></span><span class="screen__dot"></span>
+                  <span class="screen__url">эвикс.рф / Сценарии (82)</span>
+                </div>
+                <img class="screen__img" src="assets/img/screens/scenarios.png" alt="Список сценариев NOMOS — 82 штуки, разные типы" />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============== СЛАЙД 6: ЭТАП 2 — СЦЕНАРИЙ (ТЕКСТ) ============== -->
+        <section class="prez-slide">
+          <span class="slide-eyebrow">03 · Сценарии · Этап 2</span>
+          <h2 class="slide-title">Этап 2: <span class="accent">текст сценария</span> — просмотр и правки</h2>
+          <p class="slide-sub">После выбора источника AI собирает текст монолога. Здесь вы видите его целиком, можете править вручную, перегенерировать одной кнопкой или вернуться на шаг назад и сменить источник.</p>
+
+          <div class="slide-body">
+            <div class="slide-left">
+              <ul class="bullets bullets--ord">
+                <li><div><span class="bullets__title">Авто-сборка</span><small>AI собирает текст из ToV + выбранного источника + контекста (ниша, темы, запреты из квиза).</small></div></li>
+                <li><div><span class="bullets__title">Авто-очистка</span><small>Удаляются режиссёрские ремарки <code style="background:var(--mint-50); padding:1px 6px; border-radius:4px;">(пауза, улыбка)</code>, эмодзи, декоративные символы — аватар будет читать чистый монолог.</small></div></li>
+                <li><div><span class="bullets__title">Правки в любом месте</span><small>Текст становится редактируемым полем — меняете слова, переставляете блоки, переписываете хук.</small></div></li>
+                <li><div><span class="bullets__title">Перегенерация</span><small>Кнопка «Перегенерировать» — AI пробует другой вариант под тот же запрос. Можно делать неограниченно.</small></div></li>
+                <li><div><span class="bullets__title">Структура</span><small>Каждый сценарий имеет <b>hook</b> (первая фраза), основной <b>script</b> и завершение с CTA из квиза.</small></div></li>
+              </ul>
+            </div>
+
+            <div class="slide-right">
+              <div class="screen">
+                <div class="screen__bar">
+                  <span class="screen__dot"></span><span class="screen__dot"></span><span class="screen__dot"></span>
+                  <span class="screen__url">эвикс.рф / scenario-new.html · шаг 2</span>
+                </div>
+                <div class="app-mock">
+                  <div class="app-mock__side">
+                    <div class="app-mock__brand">Эвикс</div>
+                    <div class="app-mock__nav">
+                      <div class="app-mock__nav-section">ГЛАВНОЕ</div>
+                      <div class="app-mock__nav-item">Дашборд</div>
+                      <div class="app-mock__nav-item app-mock__nav-item--on">Сценарии <b>82</b></div>
+                      <div class="app-mock__nav-item">Обложки <b>74</b></div>
+                      <div class="app-mock__nav-item">Монтаж <b>6</b></div>
+                      <div class="app-mock__nav-item">Аватар <b>7</b></div>
+                    </div>
+                  </div>
+                  <div class="app-mock__main">
+                    <div class="app-mock__title">Создание сценария</div>
+                    <div class="wizrow" style="margin-bottom:8px;">
+                      <div class="wizrow__step wizrow__step--done"><div class="wizrow__num">✓</div><div class="wizrow__title">Тип</div></div>
+                      <div class="wizrow__step wizrow__step--on"><div class="wizrow__num">2</div><div class="wizrow__title">Сценарий</div></div>
+                      <div class="wizrow__step"><div class="wizrow__num">3</div><div class="wizrow__title">Аватар</div></div>
+                      <div class="wizrow__step"><div class="wizrow__num">4</div><div class="wizrow__title">Результат</div></div>
+                      <div class="wizrow__step"><div class="wizrow__num">5</div><div class="wizrow__title">Монтаж</div></div>
+                    </div>
+                    <div class="tbl-h">Текст монолога</div>
+                    <div class="scen-text">
+                      <b>Hook:</b> Каждая третья пациентка приходит ко мне с одной и той же ошибкой ухода.<br><br>
+                      Ей сказали — пользоваться кислотами каждый день. Результат — раздражение, шелушение, и кожа выглядит хуже, чем до старта ухода.<br><br>
+                      <b>Что делать правильно?</b> Кислоты — это инструмент, а не ритуал. Их частота зависит от барьера кожи и от того, какой продукт вы выбрали...
+                    </div>
+                    <div class="mock-row">
+                      <div style="display:flex; gap:6px;">
+                        <button class="mock-btn mock-btn--ghost">↻ Перегенерировать</button>
+                        <button class="mock-btn mock-btn--ghost">✎ Редактировать</button>
+                      </div>
+                      <button class="mock-btn mock-btn--primary">Далее →</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============== СЛАЙД 7: ЭТАП 3 — АВАТАР И ОЗВУЧКА ============== -->
+        <section class="prez-slide">
+          <span class="slide-eyebrow">03 · Сценарии · Этап 3</span>
+          <h2 class="slide-title">Этап 3: <span class="accent">аватар, голос, эмоция, размер</span></h2>
+          <p class="slide-sub">Текст готов — остаётся выбрать, КТО его читает и КАК. Четыре независимых блока: визуальный аватар, голос (привязан к стилю), эмоциональная окраска и формат видео.</p>
+
+          <div class="slide-body">
+            <div class="slide-left">
+              <ul class="bullets">
+                <li><div><span class="bullets__title">Аватар</span><small>7 системных ведущих + ваши кастомные. Фильтр «по тонам из квиза» показывает только подходящих под ваш бренд.</small></div></li>
+                <li><div><span class="bullets__title">Голос</span><small>Привязан к стилю аватара. Маппинг: friendly → soft, direct → confident, expert → calm, bold → energetic.</small></div></li>
+                <li><div><span class="bullets__title">Эмоция</span><small>7 вариантов: дружелюбно, воодушевлённо, нейтрально, серьёзно, шутливо, энергично, тепло.</small></div></li>
+                <li><div><span class="bullets__title">Размер видео</span><small>Reels / Shorts (9:16), YouTube (16:9), квадрат (1:1) — выбирается под целевую соцсеть.</small></div></li>
+                <li><div><span class="bullets__title">Скорость подачи</span><small>Регулируется ползунком 0.75×–1.5×. Влияет на длительность ролика без потери качества звука.</small></div></li>
+              </ul>
+            </div>
+
+            <div class="slide-right">
+              <div class="screen">
+                <div class="screen__bar">
+                  <span class="screen__dot"></span><span class="screen__dot"></span><span class="screen__dot"></span>
+                  <span class="screen__url">эвикс.рф / scenario-new.html · шаг 3</span>
+                </div>
+                <div class="app-mock">
+                  <div class="app-mock__side">
+                    <div class="app-mock__brand">Эвикс</div>
+                    <div class="app-mock__nav">
+                      <div class="app-mock__nav-section">ГЛАВНОЕ</div>
+                      <div class="app-mock__nav-item">Дашборд</div>
+                      <div class="app-mock__nav-item app-mock__nav-item--on">Сценарии <b>82</b></div>
+                      <div class="app-mock__nav-item">Обложки <b>74</b></div>
+                      <div class="app-mock__nav-item">Аватар <b>7</b></div>
+                    </div>
+                  </div>
+                  <div class="app-mock__main">
+                    <div class="wizrow" style="margin-bottom:8px;">
+                      <div class="wizrow__step wizrow__step--done"><div class="wizrow__num">✓</div><div class="wizrow__title">Тип</div></div>
+                      <div class="wizrow__step wizrow__step--done"><div class="wizrow__num">✓</div><div class="wizrow__title">Сценарий</div></div>
+                      <div class="wizrow__step wizrow__step--on"><div class="wizrow__num">3</div><div class="wizrow__title">Аватар</div></div>
+                      <div class="wizrow__step"><div class="wizrow__num">4</div><div class="wizrow__title">Результат</div></div>
+                      <div class="wizrow__step"><div class="wizrow__num">5</div><div class="wizrow__title">Монтаж</div></div>
+                    </div>
+
+                    <div class="tbl-h">Аватар</div>
+                    <div class="mock-avatars">
+                      <div class="mock-avatar mock-avatar--f mock-avatar--on" style="background:linear-gradient(180deg,#7c3aed 0%,#1f2937 100%);"><span class="mock-avatar__gender">жен</span>Карина</div>
+                      <div class="mock-avatar mock-avatar--f" style="background:linear-gradient(180deg,#ec4899 0%,#1f2937 100%);"><span class="mock-avatar__gender">жен</span>Кира</div>
+                      <div class="mock-avatar mock-avatar--m" style="background:linear-gradient(180deg,#0ea5e9 0%,#1f2937 100%);"><span class="mock-avatar__gender">муж</span>Меружан</div>
+                      <div class="mock-avatar mock-avatar--f" style="background:linear-gradient(180deg,#f59e0b 0%,#1f2937 100%);"><span class="mock-avatar__gender">жен</span>Моника</div>
+                    </div>
+
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
+                      <div>
+                        <div class="tbl-h">Голос</div>
+                        <div class="mock-chips">
+                          <span class="mock-chip mock-chip--on">Карина · calm</span>
+                          <span class="mock-chip">Лусине · soft</span>
+                        </div>
+                      </div>
+                      <div>
+                        <div class="tbl-h">Размер</div>
+                        <div class="mock-chips">
+                          <span class="mock-chip mock-chip--on">Reels 9:16</span>
+                          <span class="mock-chip">16:9</span>
+                          <span class="mock-chip">1:1</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div>
+                      <div class="tbl-h">Эмоция</div>
+                      <div class="mock-chips">
+                        <span class="mock-chip">дружелюбно</span>
+                        <span class="mock-chip mock-chip--on">экспертно</span>
+                        <span class="mock-chip">серьёзно</span>
+                        <span class="mock-chip">энергично</span>
+                      </div>
+                    </div>
+
+                    <div>
+                      <div class="tbl-h">Темп подачи · 1.0×</div>
+                      <div style="height:6px; background:var(--mint-50); border-radius:999px; position:relative; max-width:200px;">
+                        <div style="position:absolute; left:50%; top:-6px; width:18px; height:18px; background:#fff; border:2px solid var(--mint-500); border-radius:50%;"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============== СЛАЙД 8: ЭТАП 4 — РЕЗУЛЬТАТ ============== -->
+        <section class="prez-slide">
+          <span class="slide-eyebrow">03 · Сценарии · Этап 4</span>
+          <h2 class="slide-title">Этап 4: <span class="accent">результат</span> — аватар озвучивает сценарий</h2>
+          <p class="slide-sub">AI собирает видео: аватар проговаривает ваш текст выбранным голосом с заданной эмоцией. Вы получаете готовый сырой ролик — без монтажа, без переходов, без обложки. Это база для следующего шага.</p>
+
+          <div class="slide-body">
+            <div class="slide-left">
+              <ul class="bullets">
+                <li><div><span class="bullets__title">Генерация ~2–4 минуты</span><small>Аватар произносит ваш текст. На выходе — MP4 нужного размера и кадровой частоты.</small></div></li>
+                <li><div><span class="bullets__title">Inline-плеер</span><small>Можно просмотреть результат прямо в wizard'е, не выходя на отдельный экран.</small></div></li>
+                <li><div><span class="bullets__title">Что делать дальше</span><small>3 пути: «На монтаж» (этап 5), «Скачать как есть» (без обложки и переходов), «Перегенерировать» (поменять аватара или эмоцию).</small></div></li>
+                <li><div><span class="bullets__title">Никаких водяных знаков</span><small>Видео уже ваше — даже на тарифе Free.</small></div></li>
+              </ul>
+
+              <div class="surface surface--tinted">
+                <div class="tbl-h">Что внутри файла</div>
+                <div style="font-size:13px; line-height:1.55;">
+                  Видео MP4 + аудиодорожка с речью аватара. Без подписей, без музыки, без эффектов — это «голос за кадром» в подходящем формате. Всё остальное — на этапе монтажа.
+                </div>
+              </div>
+            </div>
+
+            <div class="slide-right" style="align-items:center; justify-content:center;">
+              <div class="video-mock">
+                <div class="video-mock__play">▶</div>
+                <div class="video-mock__caption">КОЛЛАГЕН<br/>ЗА КОПЕЙКИ</div>
+              </div>
+              <div style="display:flex; gap:8px; margin-top:14px;">
+                <button class="mock-btn mock-btn--ghost">↻ Перегенерировать</button>
+                <button class="mock-btn mock-btn--ghost">↓ Скачать</button>
+                <button class="mock-btn mock-btn--primary">На монтаж →</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============== СЛАЙД 9: ЭТАП 5 — МОНТАЖ ============== -->
+        <section class="prez-slide">
+          <span class="slide-eyebrow">03 · Сценарии · Этап 5</span>
+          <h2 class="slide-title">Этап 5: <span class="accent">монтаж</span> — автоматический или ручной</h2>
+          <p class="slide-sub">Финальный этап. Сырое видео отправляется в очередь — выбираете, пусть AI смонтирует за минуты, или передать живому монтажёру (тариф Pro) для премиального результата.</p>
+
+          <div class="slide-body">
+            <div class="slide-left">
+              <div class="modes">
+                <div class="mode">
+                  <div class="mode__title">Автомонтаж <small>AI</small></div>
+                  <ul>
+                    <li>Готов за 5–10 минут</li>
+                    <li>Переходы, субтитры, обложка</li>
+                    <li>Очередь с прогресс-баром и ETA</li>
+                    <li>Доступен на всех тарифах</li>
+                  </ul>
+                </div>
+                <div class="mode mode--pro">
+                  <div class="mode__title">Ручной монтаж <small>PRO</small></div>
+                  <ul>
+                    <li>Живой монтажёр — премиум-качество</li>
+                    <li>Кастомные эффекты, b-roll, тайминг</li>
+                    <li>Срок 24–48 часов</li>
+                    <li>Только в тарифе Pro</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="surface">
+                <div class="tbl-h">Статусы задачи</div>
+                <div style="display:flex; gap:6px; flex-wrap:wrap; margin-top:4px;">
+                  <span class="pill pill--draft">без монтажа</span>
+                  <span class="pill pill--gray">в очереди</span>
+                  <span class="pill pill--review">обработка</span>
+                  <span class="pill pill--orange">у монтажёра</span>
+                  <span class="pill pill--done">готово</span>
+                </div>
+                <p style="font-size:12px; color:var(--text-soft); margin-top:8px; line-height:1.5;">После статуса «готово» сценарий уходит на этап публикации — выбираете соцсети и расписание.</p>
+              </div>
+            </div>
+
+            <div class="slide-right">
+              <div class="screen">
+                <div class="screen__bar">
+                  <span class="screen__dot"></span><span class="screen__dot"></span><span class="screen__dot"></span>
+                  <span class="screen__url">эвикс.рф / edits.html</span>
+                </div>
+                <img class="screen__img" src="assets/img/screens/edits.png" alt="Очередь монтажа — задачи с разными режимами и статусами" />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============== СЛАЙД 10: ОБЛОЖКИ ============== -->
+        <section class="prez-slide">
+          <span class="slide-eyebrow">04 · Обложки</span>
+          <h2 class="slide-title">Обложки — <span class="hot">эмоциональный крючок, а не кадр из видео</span></h2>
+          <p class="slide-sub">Хорошая обложка решает 80% кликабельности. Эвикс анализирует текст сценария, подбирает один из четырёх эмоциональных углов (Шок · Боль · Страх · Тайна) и генерирует под него обложку, которая останавливает скролл.</p>
+
+          <div class="slide-body">
+            <div class="slide-left">
+              <ul class="bullets">
+                <li><div><span class="bullets__title">4 угла подачи</span><small>Шок, Боль, Страх, Тайна — система выбирает дефолтный по тексту сценария, остальные показывает на выбор.</small></div></li>
+                <li><div><span class="bullets__title">3–4 концепта на угол</span><small>Хроматическая аберрация, двойная экспозиция, контрастный текст и т.д. Сравниваете и выбираете лучший.</small></div></li>
+                <li><div><span class="bullets__title">Стабильная оценка качества</span><small>Каждая комбинация получает score — удобно отбирать варианты для A/B-теста.</small></div></li>
+                <li><div><span class="bullets__title">Форматы 9:16 и 16:9</span><small>Под Reels/Shorts и под YouTube/landing — рендерится в правильных разрешениях.</small></div></li>
+              </ul>
+            </div>
+
+            <div class="slide-right">
+              <div class="screen">
+                <div class="screen__bar">
+                  <span class="screen__dot"></span><span class="screen__dot"></span><span class="screen__dot"></span>
+                  <span class="screen__url">эвикс.рф / covers.html</span>
+                </div>
+                <img class="screen__img" src="assets/img/screens/covers.png" alt="Галерея обложек" />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============== СЛАЙД 11: ПАРСИНГ КОНКУРЕНТОВ ============== -->
+        <section class="prez-slide">
+          <span class="slide-eyebrow">05 · Парсинг конкурентов</span>
+          <h2 class="slide-title">Парсинг конкурентов — <span class="accent">автоматическая карта спроса</span></h2>
+          <p class="slide-sub">Эвикс собирает контент конкурентов из вашей ниши, считает метрики каждого ролика и превращает наблюдения в «ядро ниши» — структурированный документ, который потом подмешивается в генерацию ваших сценариев.</p>
+
+          <div class="slide-body">
+            <div class="slide-left">
+              <ul class="bullets">
+                <li><div><span class="bullets__title">Авто-парсинг по handle</span><small>Просто добавляете @ник конкурента и платформу — Эвикс сам подтягивает топ-видео и метрики.</small></div></li>
+                <li><div><span class="bullets__title">19 поддерживаемых платформ</span><small>Instagram, TikTok, YouTube, Shorts, ВКонтакте, Дзен, RuTube и другие.</small></div></li>
+                <li><div><span class="bullets__title">Метрики каждого видео</span><small>Просмотры, лайки, комментарии, engagement rate, дата публикации, прямая ссылка.</small></div></li>
+                <li><div><span class="bullets__title">Сборка «ядра»</span><small>Все паттерны автоматически сводятся в документ ниши — хук-паттерны, визуальные форматы, звукодизайн, антиканон.</small></div></li>
+              </ul>
+
+              <div class="tbl-h" style="margin-top:8px;">Поддерживаемые платформы</div>
+              <div class="platforms">
+                <span class="platform-chip"><span class="platform-chip__dot" style="background:#d62976;"></span>Instagram</span>
+                <span class="platform-chip"><span class="platform-chip__dot" style="background:#000;"></span>TikTok</span>
+                <span class="platform-chip"><span class="platform-chip__dot" style="background:#f00;"></span>YouTube</span>
+                <span class="platform-chip"><span class="platform-chip__dot" style="background:#f00;"></span>Shorts</span>
+                <span class="platform-chip"><span class="platform-chip__dot" style="background:#0077ff;"></span>VK</span>
+                <span class="platform-chip"><span class="platform-chip__dot" style="background:#26a69a;"></span>Telegram</span>
+                <span class="platform-chip"><span class="platform-chip__dot" style="background:#ff5500;"></span>Дзен</span>
+                <span class="platform-chip"><span class="platform-chip__dot" style="background:#000;"></span>RuTube</span>
+                <span class="platform-chip" style="color:var(--text-mute);">+ 11 ещё</span>
+              </div>
+            </div>
+
+            <div class="slide-right">
+              <div class="screen">
+                <div class="screen__bar">
+                  <span class="screen__dot"></span><span class="screen__dot"></span><span class="screen__dot"></span>
+                  <span class="screen__url">эвикс.рф / competitors.html</span>
+                </div>
+                <img class="screen__img" src="assets/img/screens/competitors.png" alt="База из 32 конкурентов с метриками" />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============== СЛАЙД 12: БИБЛИОТЕКА ============== -->
+        <section class="prez-slide">
+          <span class="slide-eyebrow">06 · Библиотека данных</span>
+          <h2 class="slide-title">Библиотека — <span class="accent">«мозг» вашего бренда</span></h2>
+          <p class="slide-sub">Это не файлохранилище, а структурированная база знаний. Чем полнее библиотека — тем точнее AI попадает в ваш Tone of Voice и тем меньше правок нужно после генерации.</p>
+
+          <div class="slide-body">
+            <div class="slide-left">
+              <div class="surface">
+                <div class="tbl-h">3 ядра-аналитики (генерируются автоматически)</div>
+                <div style="display:flex; flex-direction:column; gap:8px; margin-top:6px;">
+                  <div style="padding:10px 12px; background:#fff; border:1px solid var(--border); border-radius:10px;">
+                    <b style="font-size:13px;">Tone of Voice</b>
+                    <div style="font-size:12px; color:var(--text-soft); margin-top:2px;">Бренд, ниша, аудитория, темы, запреты, экспертиза.</div>
+                  </div>
+                  <div style="padding:10px 12px; background:#fff; border:1px solid var(--border); border-radius:10px;">
+                    <b style="font-size:13px;">Маркетинговый анализ</b>
+                    <div style="font-size:12px; color:var(--text-soft); margin-top:2px;">Сегменты, триггеры, антипаттерны, сезонность.</div>
+                  </div>
+                  <div style="padding:10px 12px; background:#fff; border:1px solid var(--border); border-radius:10px;">
+                    <b style="font-size:13px;">Продуктовый анализ</b>
+                    <div style="font-size:12px; color:var(--text-soft); margin-top:2px;">Линейка продуктов, USP, путь клиента, барьеры.</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="surface">
+                <div class="tbl-h">3 ядра-практики (собираются из работы)</div>
+                <div style="display:flex; flex-direction:column; gap:8px; margin-top:6px;">
+                  <div style="padding:10px 12px; background:#fff; border:1px solid var(--border); border-radius:10px;">
+                    <b style="font-size:13px;">Ядро аккаунта</b>
+                    <div style="font-size:12px; color:var(--text-soft); margin-top:2px;">Паспорт, ваши хуки и формулы, антипаттерны канала.</div>
+                  </div>
+                  <div style="padding:10px 12px; background:#fff; border:1px solid var(--border); border-radius:10px;">
+                    <b style="font-size:13px;">Ядро ниши</b>
+                    <div style="font-size:12px; color:var(--text-soft); margin-top:2px;">Бенчмарки, хук-паттерны, звуковой профиль ниши.</div>
+                  </div>
+                  <div style="padding:10px 12px; background:#fff; border:1px solid var(--border); border-radius:10px;">
+                    <b style="font-size:13px;">Ядро конкурента</b>
+                    <div style="font-size:12px; color:var(--text-soft); margin-top:2px;">Профиль, механики хуков, сильные/слабые стороны.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="slide-right">
+              <div class="screen">
+                <div class="screen__bar">
+                  <span class="screen__dot"></span><span class="screen__dot"></span><span class="screen__dot"></span>
+                  <span class="screen__url">эвикс.рф / library.html</span>
+                </div>
+                <img class="screen__img" src="assets/img/screens/library.png" alt="Библиотека данных — ToV, маркетинговый и продуктовый анализы" />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============== СЛАЙД 13: ПРОФИЛЬ, ТАРИФ, СОЦСЕТИ ============== -->
+        <section class="prez-slide">
+          <span class="slide-eyebrow">07 · Профиль, тариф, соцсети</span>
+          <h2 class="slide-title">Один экран — <span class="accent">личные данные, тариф и соцсети</span></h2>
+          <p class="slide-sub">Профиль — это «настройки бренда»: меняете личные данные, переключаете тариф, привязываете и отвязываете соцсети для парсинга упоминаний и публикаций.</p>
+
+          <div class="slide-body slide-body--wide-right">
+            <div class="slide-left">
+              <div class="surface">
+                <div class="tbl-h">Что редактируется</div>
+                <ul style="list-style:none; padding:0; margin:8px 0 0; display:flex; flex-direction:column; gap:6px; font-size:13px;">
+                  <li>→ Имя, фамилия, email</li>
+                  <li>→ Название бренда / проекта</li>
+                  <li>→ Фото профиля (PNG / JPG до 5 МБ)</li>
+                  <li>→ Привязка / отвязка соцсетей</li>
+                  <li>→ Смена тарифа (Free ↔ Pro)</li>
+                </ul>
+              </div>
+
+              <div class="plans">
+                <div class="plan">
+                  <div class="plan__name">Free</div>
+                  <div class="plan__price">0 <small>₽ / мес</small></div>
+                  <ul>
+                    <li>Автомонтаж</li>
+                    <li>Базовые форматы</li>
+                    <li>Лимит на сценарии</li>
+                  </ul>
+                </div>
+                <div class="plan plan--pro">
+                  <div class="plan__name">Pro</div>
+                  <div class="plan__price">1 990 <small>₽ / мес</small></div>
+                  <ul>
+                    <li>Ручной монтаж (живой)</li>
+                    <li>Приоритет в очереди</li>
+                    <li>Визуальные форматы</li>
+                    <li>Расширенные обложки</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div class="slide-right">
+              <div class="screen screen--tall">
+                <div class="screen__bar">
+                  <span class="screen__dot"></span><span class="screen__dot"></span><span class="screen__dot"></span>
+                  <span class="screen__url">эвикс.рф / profile.html</span>
+                </div>
+                <img class="screen__img" src="assets/img/screens/profile-full.png" alt="Профиль NOMOS — данные, тариф Pro и 9 привязанных соцсетей" />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============== СЛАЙД 14: ИТОГ ============== -->
+        <section class="prez-slide">
+          <span class="slide-eyebrow">Итог</span>
+          <h2 class="slide-title">Эвикс закрывает <span class="accent">5 ролей</span> одной платформой</h2>
+          <p class="slide-sub">Один контекст бренда — от квиза до публикации. Каждый AI-модуль знает о вас то же самое, что знаете вы сами. Поэтому Эвикс производит не «нейроконтент», а маркетинговый материал в фирменном стиле.</p>
+
+          <div class="slide-body slide-body--single">
+            <div class="benefits">
+              <div class="benefit">
+                <div class="benefit__ic">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                </div>
+                <h3>Сценарист</h3>
+                <p>Wizard из 5 этапов + 4 источника генерации + автоочистка текста под аватара.</p>
+              </div>
+              <div class="benefit">
+                <div class="benefit__ic" style="background:var(--orange-50); color:var(--orange-700);">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21v-2a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v2"/></svg>
+                </div>
+                <h3>Ведущий и оператор</h3>
+                <p>Каталог аватаров и голосов с автомаппингом под Tone of Voice. Без камеры и студии.</p>
+              </div>
+              <div class="benefit">
+                <div class="benefit__ic">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                </div>
+                <h3>Монтажёр и дизайнер</h3>
+                <p>Автомонтаж за минуты или живой монтажёр для премиума. Обложки по 4 эмоциональным углам.</p>
+              </div>
+              <div class="benefit">
+                <div class="benefit__ic" style="background:var(--orange-50); color:var(--orange-700);">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/></svg>
+                </div>
+                <h3>SMM и аналитик</h3>
+                <p>Парсинг 19 соцсетей, метрики конкурентов, библиотека ядер бренда, публикация в один клик.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+
+    <footer class="prez-bottom">
+      <div class="prez-dots" id="prez-dots"></div>
+      <div class="prez-nav">
+        <button class="prez-btn" id="prez-prev" aria-label="Назад">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <button class="prez-btn" id="prez-next" aria-label="Вперёд">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    (function () {
+      const track = document.getElementById('prez-track');
+      const slides = track.querySelectorAll('.prez-slide');
+      const total = slides.length;
+      const dotsRoot = document.getElementById('prez-dots');
+      const counterCur = document.getElementById('prez-cur');
+      const counterTotal = document.getElementById('prez-total');
+      const prevBtn = document.getElementById('prez-prev');
+      const nextBtn = document.getElementById('prez-next');
+
+      counterTotal.textContent = String(total).padStart(2, '0');
+
+      slides.forEach((_, i) => {
+        const b = document.createElement('button');
+        b.className = 'prez-dot';
+        b.type = 'button';
+        b.setAttribute('aria-label', 'К слайду ' + (i + 1));
+        b.addEventListener('click', () => go(i));
+        dotsRoot.appendChild(b);
+      });
+      const dots = dotsRoot.querySelectorAll('.prez-dot');
+
+      let idx = 0;
+      function render() {
+        track.style.transform = 'translateX(-' + (idx * 100) + '%)';
+        counterCur.textContent = String(idx + 1).padStart(2, '0');
+        dots.forEach((d, i) => d.setAttribute('aria-current', i === idx ? 'true' : 'false'));
+        prevBtn.toggleAttribute('disabled', idx === 0);
+        nextBtn.toggleAttribute('disabled', idx === total - 1);
+      }
+      function go(n) {
+        idx = Math.max(0, Math.min(total - 1, n));
+        render();
+      }
+      function next() { go(idx + 1); }
+      function prev() { go(idx - 1); }
+
+      prevBtn.addEventListener('click', prev);
+      nextBtn.addEventListener('click', next);
+
+      window.addEventListener('keydown', (e) => {
+        if (e.target.closest('input, textarea')) return;
+        switch (e.key) {
+          case 'ArrowRight':
+          case 'PageDown':
+          case ' ':
+            e.preventDefault(); next(); break;
+          case 'ArrowLeft':
+          case 'PageUp':
+            e.preventDefault(); prev(); break;
+          case 'Home':
+            e.preventDefault(); go(0); break;
+          case 'End':
+            e.preventDefault(); go(total - 1); break;
+        }
+      });
+
+      let startX = 0, dragging = false;
+      track.addEventListener('touchstart', (e) => { startX = e.touches[0].clientX; dragging = true; }, {passive: true});
+      track.addEventListener('touchend', (e) => {
+        if (!dragging) return;
+        dragging = false;
+        const dx = e.changedTouches[0].clientX - startX;
+        if (Math.abs(dx) > 40) (dx < 0 ? next : prev)();
+      }, {passive: true});
+
+      const m = location.hash.match(/slide-(\d+)/);
+      if (m) go(parseInt(m[1], 10) - 1);
+
+      render();
+    })();
+  </script>
+</body>
+</html>
